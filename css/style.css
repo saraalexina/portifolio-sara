@@ -82,6 +82,16 @@ header a:hover {
     text-decoration: underline;
 }
 
+header h1 a {
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+}
+
+header h1 a:hover {
+    text-decoration: none;
+}
+
 /* conteudo principal e hero */
 main {
     max-width: 1000px;
@@ -91,6 +101,7 @@ main {
 
 section {
     margin-bottom: 4rem;
+    scroll-margin-top: 110px;
 }
 
 #hero {
@@ -136,8 +147,7 @@ section {
     margin-bottom: 1rem;
 }
 
-/* trajetoria com abas (fichario) */
-
+/* 7. TRAJETÓRIA (ÍCONE GIGANTE PASTA WINDOWS 11) */
 #trajetoria h3 {
     font-size: 1.4rem;
     margin-bottom: 1.5rem;
@@ -146,62 +156,107 @@ section {
 .tabs-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
-    padding-left: 0.5rem;
+    align-items: flex-end;
+    gap: 1.25rem; /* Espaço extra para acomodar a inclinação diagonal de cada aba */
+    padding-left: 0;
+    position: relative;
 }
 
 .tab-btn {
-    padding: 0.6rem 1 rem;
-    border: 2px solid var(--cor-borda);
-    border-bottom: none;
-    border-radius: 8px 8px 0 0;
+    position: relative;
+    border: none;
+    border-radius: 14px 4px 0 0;
+    padding: 0.75rem 1.25rem 1.2rem 1.25rem; /* Aumentamos o padding inferior para compensar o encaixe */
+    margin-bottom: -14px; /* Faz a aba entrar por trás do corpo amarelo da pasta */
     font-weight: 700;
     font-size: 0.85rem;
+    color: #1e293b;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    z-index: 1;
+    transition: transform 0.2s ease, filter 0.2s ease;
+    box-shadow: inset 0 -18px 12px -12px rgba(0, 0, 0, 0.25); /* Mantém o efeito de sombra exatamente na linha de encaixe */
 }
 
-/* cores individuais de cada aba */
-.tab-btn:nth-child(1) { background-color: var(--aba-1); }
-.tab-btn:nth-child(2) { background-color: var(--aba-2); }
-.tab-btn:nth-child(3) { background-color: var(--aba-3); }
-.tab-btn:nth-child(4) { background-color: var(--aba-4); color: #ffffff; }
-
-.tab-btn:active {
-    transform: translateY(-4px);
+/* Cria a aba inclinada (chanfradura diagonal) à direita de cada botão */
+.tab-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -14px;
+    width: 24px;
+    height: 100%;
+    background: inherit; /* Copia exatamente a mesma cor do botão */
+    border-radius: 0 10px 0 0;
+    transform: skewX(24deg); /* Inclina a lateral como no ícone do Windows */
+    z-index: -1;
+    box-shadow: inset 0 -6px 10px -4px rgba(0, 0, 0, 0.25);
 }
 
+/* Cores individuais das abas quando estão inativas (no fundo) */
+.tab-btn:nth-child(1) { background-color: #cbd5e1; }
+.tab-btn:nth-child(2) { background-color: #ff6b6b; color: #ffffff; }
+.tab-btn:nth-child(3) { background-color: #06b6d4; color: #ffffff; }
+.tab-btn:nth-child(4) { background-color: #9333ea; color: #ffffff; }
+
+.tab-btn:hover:not(.active) {
+    filter: brightness(1.06);
+    transform: translateY(-2px);
+}
+
+/* Aba Ativa: Assume a cor frontal da pasta do Windows e vem para a frente */
+.tab-btn.active {
+    background-color: #ffe066;
+    color: #111111;
+    z-index: 4;
+    box-shadow: none;
+    padding-bottom: 0.85rem;
+    margin-bottom: -4px;
+}
+.tab-btn.active::after {
+    box-shadow: none;
+}
+
+/* Corpo principal da pasta (estilo Fluent Design Windows 11) */
 .tab-content {
-    background-color: var(--fundo-fichario);
-    border: 2px solid var(--cor-borda);
-    border-radius: 12px;
-    padding: 1.75rem 1.5rem;
-    box-shadow: 6px 6px 0px var(--cor-borda);
+    background: linear-gradient(180deg, #ffe066 0%, #fbbf24 100%);
+    border: none;
+    border-radius: 0 22px 22px 22px; /* Canto superior esquerdo reto onde a 1ª aba encaixa */
+    padding: 2.25rem 2rem;
+    box-shadow: 0 18px 35px -10px rgba(245, 158, 11, 0.45), 0 4px 12px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 3;
 }
 
-/* esconde as abas inativas (o js altera a classe .active)*/
-
+/* Esconde as abas inativas */
 .tab-pane {
     display: none;
 }
 
 .tab-pane.active {
     display: block;
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .tab-pane h4 {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    color: #451a03; /* Marrom escuro quente para alto contraste no amarelo */
     margin-bottom: 1rem;
-    border-bottom: 2px solid var(--cor-borda);
+    border-bottom: 2px solid rgba(69, 26, 3, 0.15);
     padding-bottom: 0.5rem;
 }
 
 .tab-pane ul {
     padding-left: 1.25rem;
+    color: #271001;
 }
 
 .tab-pane li {
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.65rem;
 }
 
 /* rodape */
@@ -224,18 +279,23 @@ footer h3 {
 }
 
 .links-contato a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
     color: var(--cor-texto);
-    font-weight: 700;
-    text-decoration: none;
-    padding: 0.4rem 0.8rem;
     border: 2px solid var(--cor-borda);
-    border-radius: 6px;
+    border-radius: 8px;
     background-color: var(--cor-fundo);
+    box-shadow: 4px 4px 0px var(--cor-borda);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 .links-contato a:hover {
-    background-color: var(--cor-texto);
-    color: var(--cor-fundo);
+    background-color: var(--fundo-fichario); /* Destaque amarelo ao passar o mouse */
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--cor-borda);
 }
 
 footer p {
